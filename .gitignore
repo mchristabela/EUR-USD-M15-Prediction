@@ -1,0 +1,6 @@
+.ipynb_checkpoints/
+__pycache__/
+.venv/
+.DS_Store
+# model biner bergantung versi scikit-learn; yang dibawa ke web adalah models/ridge_params.json
+models/*.joblib

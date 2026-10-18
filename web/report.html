@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EUR/USD M15 · Laporan Model</title>
+<style>
+:root{--bg:#fff;--bg2:#f5f5f7;--card:#fff;--tx:#1d1d1f;--mu:#6e6e73;--ln:rgba(0,0,0,.1);--bl:#0071e3;--rd:#d70015;--gr:#248a3d;--or:#bf4800;--pu:#8944ab;--nav:rgba(255,255,255,.74);--seg:rgba(120,120,128,.14);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#000;--bg2:#0c0c0e;--card:#1c1c1e;--tx:#f5f5f7;--mu:#a1a1a6;--ln:rgba(255,255,255,.14);--bl:#2997ff;--rd:#ff453a;--gr:#30d158;--or:#ff9f0a;--pu:#bf5af2;--nav:rgba(22,22,24,.74);--seg:rgba(120,120,128,.32);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#000;--bg2:#0c0c0e;--card:#1c1c1e;--tx:#f5f5f7;--mu:#a1a1a6;--ln:rgba(255,255,255,.14);--bl:#2997ff;--rd:#ff453a;--gr:#30d158;--or:#ff9f0a;--pu:#bf5af2;--nav:rgba(22,22,24,.74);--seg:rgba(120,120,128,.32);color-scheme:dark}
+html{background:var(--bg);scroll-behavior:smooth;scroll-padding-top:calc(60px + env(safe-area-inset-top,0px))}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--nav);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);z-index:10}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--nav);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--ln)}
+.nav div{max-width:980px;margin:auto;height:52px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.nav b{font-weight:600;font-size:15px;letter-spacing:-.01em;white-space:nowrap}
+.nav nav{display:flex;gap:22px;overflow-x:auto}
+.nav a{color:var(--mu);text-decoration:none;font-size:13px;white-space:nowrap;transition:color .2s}
+.nav a:hover{color:var(--tx)}
+.w{max-width:980px;margin:auto}
+.hero{text-align:center;padding:112px 22px 72px}
+h1{font-size:clamp(42px,9vw,92px);line-height:1.03;letter-spacing:-.04em;font-weight:700;margin:0 auto;max-width:11em}
+h1 span{color:var(--mu)}
+.sub{font-size:clamp(18px,2.4vw,23px);color:var(--mu);max-width:30em;margin:26px auto 0;line-height:1.4}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:72px auto 0;max-width:820px}
+.stats div{padding:6px 12px;border-left:1px solid var(--ln)}
+.stats div:first-child{border-left:0}
+.stats b{display:block;font-size:clamp(26px,4vw,38px);font-weight:600;letter-spacing:-.03em;line-height:1.1}
+.stats small{color:var(--mu);font-size:13px}
+.sec{padding:96px 22px}
+.alt{background:var(--bg2)}
+h2{font-size:clamp(30px,5vw,48px);line-height:1.08;letter-spacing:-.03em;font-weight:700;margin:0;max-width:15em}
+.lead{color:var(--mu);font-size:clamp(17px,2vw,21px);line-height:1.45;max-width:34em;margin:18px 0 44px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:24px;padding:28px}
+.seg{display:inline-flex;background:var(--seg);border-radius:10px;padding:2px;gap:2px;max-width:100%;overflow-x:auto}
+.seg button,.chips button{font:inherit;font-size:13px;border:0;background:transparent;color:var(--tx);padding:6px 14px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:background .2s,box-shadow .2s}
+.seg button[aria-pressed="true"]{background:var(--card);box-shadow:0 1px 4px rgba(0,0,0,.18);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chips button{border:1px solid var(--ln);border-radius:980px;color:var(--mu)}
+.chips button[aria-pressed="true"]{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+button:focus-visible{outline:2px solid var(--bl);outline-offset:2px}
+.row{display:grid;grid-template-columns:128px 1fr 96px;align-items:center;gap:14px;padding:13px 0;border-top:1px solid var(--ln);font-size:15px}
+.row:first-child{border-top:0}
+.trk{position:relative;height:10px;background:var(--seg);border-radius:6px}
+.trk::after{content:"";position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:var(--mu)}
+.trk i{position:absolute;top:0;bottom:0;border-radius:6px;transition:all .4s}
+.row em{font-style:normal;color:var(--mu);font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+.note{color:var(--mu);font-size:13px;margin:14px 0 0}
+.leg{display:flex;flex-wrap:wrap;gap:6px 20px;margin-top:14px;font-size:13px;color:var(--mu)}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px}
+svg{display:block;width:100%;height:auto}
+svg text{fill:var(--mu);font-size:11px;font-family:inherit}
+.met{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:22px;padding-top:22px;border-top:1px solid var(--ln)}
+.met b{display:block;font-size:clamp(19px,2.6vw,26px);font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.met small{color:var(--mu);font-size:12.5px}
+.neg{color:var(--rd)}.pos{color:var(--gr)}
+.au{display:grid;grid-template-columns:76px 1fr 70px 70px;gap:10px 12px;align-items:center;font-size:14px}
+.au .h{color:var(--mu);font-size:12.5px}
+.au .bar{height:10px;background:var(--seg);border-radius:6px;position:relative}
+.au .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--bl)}
+.au .bar b{position:absolute;right:0;top:-24px;font-weight:600;font-size:13px}
+.au span{font-variant-numeric:tabular-nums}
+.pts{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.pts h3{font-size:19px;letter-spacing:-.015em;margin:0 0 8px}
+.pts p{color:var(--mu);margin:0;font-size:15.5px}
+footer{padding:40px 22px calc(40px + env(safe-area-inset-bottom,0px));color:var(--mu);font-size:12.5px;text-align:center}
+@media (max-width:720px){.sec{padding:68px 18px}.hero{padding:80px 18px 56px}.card{padding:20px;border-radius:20px}.stats{grid-template-columns:1fr 1fr;gap:26px 0}.stats div:nth-child(3){border-left:0}.row{grid-template-columns:92px 1fr 78px;gap:10px}.met{grid-template-columns:1fr 1fr}.pts{grid-template-columns:1fr}.au{grid-template-columns:62px 1fr 56px 56px;gap:22px 8px}.nav nav{gap:16px}}
+</style>
+</head>
+<body>
+<header class="nav"><div><b>EUR/USD M15</b><nav><a href="#akurasi">Akurasi</a><a href="#arah">Arah</a><a href="#backtest">Backtest</a><a href="#audit">Audit</a></nav></div></header>
+
+<main>
+<section class="hero">
+  <h1>Edge-nya nyata. <span>Spread-nya lebih besar.</span></h1>
+  <p class="sub">Laporan walk-forward untuk model prediksi return EUR/USD 15 menit, diuji pada data yang belum pernah dilihat model.</p>
+  <div class="stats">
+    <div><b>59.812</b><small>bar uji</small></div>
+    <div><b>32</b><small>fitur</small></div>
+    <div><b>5</b><small>fold walk-forward</small></div>
+    <div><b>51,5%</b><small>akurasi arah terbaik</small></div>
+  </div>
+</section>
+
+<section class="sec alt" id="akurasi"><div class="w">
+  <h2>Tidak ada model yang mengalahkan naive.</h2>
+  <p class="lead">Prediksi “tidak berubah” sulit dikalahkan di pasar yang efisien. Keempat model hanya berbeda sepersepuluh ribu dari R² baseline, dan tidak satu pun signifikan.</p>
+  <div class="card">
+    <div id="r2"></div>
+    <p class="note">R² out-of-sample terhadap naive, dalam satuan 10⁻⁴. Kanan nol berarti lebih baik dari naive. p dari uji Diebold-Mariano.</p>
+  </div>
+</div></section>
+
+<section class="sec" id="arah"><div class="w">
+  <h2>Arahnya sedikit bisa ditebak.</h2>
+  <p class="lead">Classifier arah konsisten di atas 51% pada kelima fold. Selisihnya dari 50% signifikan secara statistik (p &lt; 0,001), tetapi sangat kecil.</p>
+  <div class="card">
+    <div id="fold"></div>
+    <div class="leg" id="foldleg"></div>
+    <p class="note">Directional accuracy per fold. Garis putus-putus menandai 50%.</p>
+  </div>
+</div></section>
+
+<section class="sec alt" id="backtest"><div class="w">
+  <h2>Spread menghabiskan seluruhnya.</h2>
+  <p class="lead">Pilih model dan seberapa selektif sinyalnya. Setiap kombinasi rugi setelah biaya: keuntungan kotor per bar tidak pernah cukup menutup setengah spread tiap perubahan posisi.</p>
+  <div class="card">
+    <div class="seg" id="mseg" role="group" aria-label="Pilih model"></div>
+    <div style="height:20px"></div>
+    <div id="bt"></div>
+    <div class="leg"><span><i style="background:var(--bl)"></i>Keuntungan kotor per bar (pips)</span><span><i style="background:var(--rd)"></i>Hasil bersih per bar setelah spread (pips)</span></div>
+    <div class="chips" id="qchips" role="group" aria-label="Seberapa selektif sinyalnya"></div>
+    <div class="met" id="met"></div>
+  </div>
+  <p class="note">Entry di Close bar t, exit di Close bar t+1. Biaya = setengah spread per unit perubahan posisi (satu round-trip = satu spread). Filter keyakinan dihitung per fold, tanpa look-ahead.</p>
+</div></section>
+
+<section class="sec" id="audit"><div class="w">
+  <h2>Akurasi 71% itu semu.</h2>
+  <p class="lead">Pada 1% sinyal paling yakin, classifier benar 71,6%. Hampir semuanya muncul di jam rollover, saat spread melebar. Itu pantulan bid-ask, bukan sesuatu yang bisa dieksekusi.</p>
+  <div class="card" style="padding-top:44px">
+    <div class="au" id="au"></div>
+    <p class="note" style="margin-top:22px">Setelah bar dengan spread di atas 1 pip dibuang, akurasi classifier turun menjadi 51,1%.</p>
+  </div>
+</div></section>
+
+<section class="sec alt"><div class="w">
+  <h2>Yang bisa diklaim dengan jujur.</h2>
+  <div class="pts" style="margin-top:44px">
+    <div><h3>Model level kalah karena optimasi</h3><p>Gradient descent tidak konvergen pada fitur OHLC yang kolinear. OLS closed-form menyamai naive.</p></div>
+    <div><h3>Edge arah hanya 1–1,5 poin</h3><p>Fitur teknikal M15 memberi sinyal tipis yang konsisten antarfold, tetapi tidak cukup besar.</p></div>
+    <div><h3>Biaya mengakhiri ceritanya</h3><p>Rata-rata keuntungan kotor di bawah 0,5 pip per bar, sementara biaya transaksi sekitar 0,24 pip tiap perubahan posisi.</p></div>
+  </div>
+  <p class="note" style="margin-top:40px">Langkah berikutnya yang lebih menjanjikan: prediksi volatilitas, event kalender ekonomi, dan data eksternal seperti DXY dan selisih yield.</p>
+</div></section>
+</main>
+<footer>Data: 100.000 bar M15, 10 Sep 2021 – 12 Sep 2025. Angka berasal dari run notebook v2 dan dapat sedikit berbeda antarversi library. Bukan saran investasi.</footer>
+
+<script>
+const f=(x,d=2)=>x.toLocaleString("id-ID",{minimumFractionDigits:d,maximumFractionDigits:d});
+const sg=(x,d=2)=>(x>0?"+":x<0?"−":"")+f(Math.abs(x),d);
+const C={bl:"var(--bl)",gr:"var(--gr)",or:"var(--or)",pu:"var(--pu)",rd:"var(--rd)"};
+
+/* 1. R² OOS */
+const R2=[["Ridge (semua fitur)",-5.3,.374],["Rata-rata train",-.2,.344],["HistGB (semua fitur)",.4,.936],["AR(1) ret1",1.8,.629]];
+document.getElementById("r2").innerHTML=R2.map(([n,v,p])=>{const w=Math.abs(v)/6*50,l=v<0?50-w:50;
+ return `<div class="row"><span>${n}</span><div class="trk"><i style="left:${l}%;width:${w}%;background:${v<0?C.rd:C.gr}"></i></div><em>${sg(v,1)} · p ${f(p)}</em></div>`}).join("");
+
+/* 2. Akurasi arah per fold */
+const FD=[["HistGB Classifier",C.bl,[.5127,.5131,.5195,.5165,.5155]],["Ridge",C.gr,[.5129,.5026,.5011,.5094,.5154]],["HistGB regresor",C.or,[.5117,.4979,.5094,.5068,.5085]],["AR(1)",C.pu,[.5104,.5026,.5055,.5073,.5045]]];
+(function(){const W=680,H=280,pl=46,pr=14,pt=14,pb=34,lo=.49,hi=.525,x=i=>pl+i*(W-pl-pr)/4,y=v=>pt+(hi-v)/(hi-lo)*(H-pt-pb);
+ let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Akurasi arah per fold">`;
+ [.49,.5,.51,.52].forEach(v=>{s+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--ln)" ${v===.5?'stroke-dasharray="5 4" stroke-width="1.5" style="stroke:var(--mu)"':""}/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end">${f(v*100,0)}%</text>`});
+ for(let i=0;i<5;i++)s+=`<text x="${x(i)}" y="${H-10}" text-anchor="middle">Fold ${i+1}</text>`;
+ FD.forEach(([n,c,d],k)=>{s+=`<polyline fill="none" stroke="${c}" stroke-width="${k?1.8:2.8}" stroke-linejoin="round" points="${d.map((v,i)=>x(i)+","+y(v)).join(" ")}"/>`+d.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="${k?3:4.2}" fill="${c}"><title>${n}, fold ${i+1}: ${f(v*100)}%</title></circle>`).join("")});
+ document.getElementById("fold").innerHTML=s+"</svg>";
+ document.getElementById("foldleg").innerHTML=FD.map(([n,c])=>`<span><i style="background:${c}"></i>${n}</span>`).join("")})();
+
+/* 3. Backtest: [bar, entry, hit, gross/bar, net/bar, total net] */
+const QL=["Semua","Top 50%","Top 20%","Top 10%","Top 5%","Top 1%"];
+const B={
+ clf:["HistGB Classifier",[[59812,20584,.5155,.0813,-.0722,-4317.95],[29900,16759,.5276,.1316,-.1334,-3989.10],[11944,8080,.5494,.2540,-.1693,-2021.65],[5985,4169,.5713,.3063,-.2803,-1677.60],[2995,2101,.6082,.4814,-.3670,-1099.25],[600,450,.7158,.9375,-.8919,-535.15]]],
+ rdg:["Ridge",[[59812,19691,.5083,.0452,-.0820,-4907.35],[29906,15286,.5165,.0812,-.1302,-3892.40],[11965,7734,.5212,.1161,-.2053,-2456.05],[5985,4275,.5297,.2120,-.2263,-1354.50],[2995,2297,.5406,.3971,-.2212,-662.50],[600,507,.5637,.1835,-.9788,-587.25]]],
+ hgb:["HistGB regresor",[[59812,26517,.5069,.0515,-.1353,-8095.55],[29301,16899,.5088,.0652,-.1922,-5632.00],[9725,6371,.5129,.1376,-.2056,-1999.05],[5004,3609,.5164,.1998,-.1775,-888.25],[3097,2270,.5161,.1998,-.1377,-426.55],[599,486,.5319,.3548,-.0149,-8.95]]],
+ ar:["AR(1)",[[59812,28457,.5061,.0507,-.1524,-9112.65],[29933,21255,.5160,.1073,-.1766,-5287.00],[11965,9888,.5186,.1234,-.1888,-2258.95],[5983,5195,.5250,.1724,-.1684,-1007.45],[2997,2692,.5264,.0800,-.2841,-851.40],[604,564,.5117,.0924,-.3659,-221.00]]]};
+let cur={m:"clf",q:5};
+function draw(){
+ const r=B[cur.m][1],W=680,H=300,pl=44,pr=10,pt=14,pb=36,ph=H-pt-pb,y=v=>pt+ph/2-v*ph/2,gw=(W-pl-pr)/6;
+ let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Keuntungan kotor dan bersih per bar">`;
+ [-1,-.5,0,.5,1].forEach(v=>s+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" style="stroke:${v?"var(--ln)":"var(--mu)"}"/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end">${v}</text>`);
+ r.forEach((d,i)=>{const gx=pl+i*gw,bx=gx+gw/2;
+  s+=`<g data-i="${i}" style="cursor:pointer"><rect x="${gx+4}" y="${pt}" width="${gw-8}" height="${ph}" rx="10" fill="${i===cur.q?"var(--seg)":"transparent"}"/>`+
+  [[d[3],C.bl,-24],[d[4],C.rd,2]].map(([v,c,o])=>`<rect x="${bx+o}" y="${v>=0?y(v):y(0)}" width="22" height="${Math.max(2,Math.abs(y(v)-y(0)))}" rx="4" fill="${c}"><title>${f(v,3)} pips per bar</title></rect>`).join("")+
+  `<text x="${bx}" y="${H-12}" text-anchor="middle" style="${i===cur.q?"fill:var(--tx);font-weight:600":""}">${QL[i]}</text></g>`});
+ document.getElementById("bt").innerHTML=s+"</svg>";
+ const d=r[cur.q],m=[["Entry",f(d[1],0),""],["Hit rate",f(d[2]*100,1)+"%",""],["Kotor / bar",sg(d[3],2),d[3]>0?"pos":"neg"],["Bersih / bar",sg(d[4],2),d[4]>0?"pos":"neg"],["Total bersih (pips)",sg(d[5],0),d[5]>0?"pos":"neg"]];
+ document.getElementById("met").innerHTML=m.map(([k,v,c])=>`<div><b class="${c}">${v}</b><small>${k}</small></div>`).join("");
+ document.querySelectorAll("#mseg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===cur.m));
+ document.querySelectorAll("#qchips button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.q===cur.q));
+}
+document.getElementById("mseg").innerHTML=Object.entries(B).map(([k,[n]])=>`<button data-m="${k}">${n}</button>`).join("");
+document.getElementById("qchips").innerHTML=QL.map((n,i)=>`<button data-q="${i}">${n}</button>`).join("");
+document.getElementById("mseg").onclick=e=>{const b=e.target.closest("button");if(b){cur.m=b.dataset.m;draw()}};
+document.getElementById("qchips").onclick=e=>{const b=e.target.closest("button");if(b){cur.q=+b.dataset.q;draw()}};
+document.getElementById("bt").onclick=e=>{const g=e.target.closest("[data-i]");if(g){cur.q=+g.dataset.i;draw()}};
+draw();
+
+/* 4. Audit sinyal */
+const AU=[["0–50%",.5034,.34,.085],["50–90%",.5168,.38,.105],["90–99%",.5556,.85,.339],["99–100%",.7158,2.77,.943]];
+document.getElementById("au").innerHTML=`<span class="h">Keyakinan</span><span class="h">Akurasi arah</span><span class="h">Spread</span><span class="h">Jam 21–23</span>`+
+ AU.map(([k,a,sp,h])=>`<span>${k}</span><div class="bar"><i style="width:${(a-.5)/.22*100}%"></i><b>${f(a*100,1)}%</b></div><span>${f(sp)} pip</span><span>${f(h*100,0)}%</span>`).join("");
+</script>
+</body>
+</html>
